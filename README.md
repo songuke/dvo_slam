@@ -56,10 +56,15 @@ sudo apt-get install libsuitesparse-dev
 
 ### g2o 
 It is necessary to build g2o *after* installing suitesparse to let g2o detect suitesparse.
-The version I use is commit ff647bd.
+Recent g2o starts using C++11, which causes trouble when DVO links to the default PCL provided by Ubuntu. This PCL build does not have C++11 support. 
+
+It is best to use an old version of g2o instead, which does not require C++11, so we don't need to rebuild PCL with C++11. The suitable g2o version is commit 67d5fa7.
+(To speed up the g2o compilation, you can skip building g2o apps and examples, which are not necessary in our case.)
 
 ```
 git clone https://github.com/RainerKuemmerle/g2o.git
+cd g2o
+git checkout 67d5fa7
 mkdir build
 cd build
 cmake .. -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_LGPL_SHARED_LIBS:BOOL=OFF
@@ -85,4 +90,28 @@ catkin_make --pkg dvo_ros
 catkin_make --pkg dvo_slam 
 catkin make --pkg dvo_benchmark
 ```
+
+## How to run
+
+```
+source devel/setup.sh  
+```
+
+This will make ROS able to find our newly built packages. 
+
+Now we can navigate to src/dvo_benchmark/launch and execute
+
+```
+roslaunch dvo_benchmark benchmark.launch dataset:=<RGBD dataset folder>
+```
+
+
+## Rviz
+
+After DVO SLAM is running, you can launch rviz to observe some results. 
+
+Target frame is "world".
+
+The cloud is only updated once in a while in the viewer.   
+Try to display the interactive markers instead. If it works, you will see the camera icon moving. 
 

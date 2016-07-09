@@ -37,7 +37,7 @@ public:
   Timestamped(const ros::Time& new_timestamp) :
     timestamp(new_timestamp)
   {
-    assert(!timestamp.isZero());
+    //assert(!timestamp.isZero());
   }
 
   //! read the data from a stream
