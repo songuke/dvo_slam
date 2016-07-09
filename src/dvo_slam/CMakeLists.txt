@@ -2,19 +2,32 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(dvo_slam)
 
+set(BUILD_SHARED_LIBS OFF)
+
 LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake_modules")
 
 find_package(catkin REQUIRED COMPONENTS roscpp dynamic_reconfigure dvo_core dvo_ros sensor_msgs image_transport message_filters cv_bridge visualization_msgs interactive_markers)
 find_package(cmake_modules REQUIRED)
-find_package(Eigen3 REQUIRED)
 find_package(G2O REQUIRED)
 find_package(SuiteSparse REQUIRED)
-#find_package(sophus REQUIRED)
-#find_package(Boost REQUIRED thread)
-find_package(OpenCV 2.4.8 REQUIRED)
-find_package(TBB REQUIRED)
+find_package(OpenGL)
 
-#LIST(APPEND CMAKE_CXX_FLAGS "-std=c++11")
+# C++11 support
+IF(NOT MSVC)
+  include(CheckCXXCompilerFlag)
+  CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+  CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+  if(COMPILER_SUPPORTS_CXX11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  elseif(COMPILER_SUPPORTS_CXX0X)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+  else()
+    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+  endif()
+endif()
+
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" ) 
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
 
 IF(G2O_FOUND)
 message(STATUS "found g2o ${G2O_FOUND}")
@@ -28,14 +41,13 @@ generate_dynamic_reconfigure_options(cfg/GraphVisualizer.cfg cfg/KeyframeSlam.cf
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES dvo_slam
-  DEPENDS OpenCV
+  DEPENDS G2O
 )
 
 include_directories(
   "include"
   ${dvo_slam_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIRS}
   ${G2O_INCLUDE_DIR}
   ${CSPARSE_INCLUDE_DIR}
 )
@@ -71,14 +83,28 @@ add_library(${PROJECT_NAME}
   src/types.cpp
 )
 
+message("G2O lib: ${G2O_CORE_LIBRARY}")
+
 target_link_libraries(${PROJECT_NAME}
-  ${G2O_CORE_LIBRARY}
-  ${G2O_SOLVER_DENSE}
-  ${G2O_SOLVER_CSPARSE}
-  ${G2O_SOLVER_CSPARSE_EXTENSION}
-  ${CSPARSE_LIBRARY}
-  ${G2O_TYPES_SLAM3D}
+  #${G2O_CORE_LIBRARY}
+  #${G2O_SOLVER_DENSE}
+  #${G2O_SOLVER_CSPARSE}
+  #${G2O_SOLVER_CSPARSE_EXTENSION}
+  #${CSPARSE_LIBRARY}
+  #${G2O_TYPES_SLAM3D}
+
   ${catkin_LIBRARIES}
+
+g2o_solver_dense
+g2o_solver_csparse
+g2o_csparse_extension
+cxsparse
+g2o_types_slam3d
+g2o_opengl_helper
+g2o_stuff
+g2o_core
+
+${OPENGL_LIBRARIES}
 )
 
 #add_executable(camera_keyframe_tracker

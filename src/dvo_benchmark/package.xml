@@ -1,0 +1,22 @@
+<package format="2">
+  <name>dvo_benchmark</name>
+  <version>0.1.0</version>
+  <description>
+    dvo_benchmark
+  </description>
+  <maintainer email="christian.kerl@in.tum.de">Christian Kerl</maintainer>
+  <license>GPL</license>
+
+  <url>https://github.com/tum-vision/dvo_slam</url>
+  <author>Christian Kerl</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>cmake_modules</build_depend>
+
+  <depend>roscpp</depend>
+  <depend>dvo_core</depend>
+  <depend>dvo_ros</depend>
+  <depend>dvo_slam</depend>
+    
+</package>

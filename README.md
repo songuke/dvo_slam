@@ -1,66 +1,73 @@
-# Dense Visual Odometry and SLAM (dvo_slam)
+# How to build DVO SLAM for Linux Mint Rosa 17.3 (based on Ubunty Trusty 14.04 LTS)
 
-*NOTE: this is an alpha release APIs and parameters are going to change in near future. No support is provided at this point.*
+## Install ROS Indigo
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu trusty main" > /etc/apt/sources.list.d/ros-latest.list'
+sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key 0xB01FA116
+sudo apt-get update
+sudo apt-get install ros-indigo-desktop-full
+sudo rosdep init
+rosdep update
+echo "source /opt/ros/indigo/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+sudo apt-get install python-rosinstall
 
-These packages provide an implementation of the rigid body motion estimation of an RGB-D camera from consecutive images.
 
- *  **dvo_core**
-    
-    Core implementation of the motion estimation algorithm. 
-    
- *  **dvo_ros**
-    
-    Integration of *dvo_core* with ROS.
-    
- *  **dvo_slam**
-    
-    Pose graph SLAM system based on *dvo_core* and integration with ROS.
-    
- *  **dvo_benchmark**
-    
-    Integration of *dvo_slam* with TUM RGB-D benchmark, see http://vision.in.tum.de/data/datasets/rgbd-dataset.
-    
- *  **sophus**
-    
-    ROS package wrapper for Hauke Strasdat's Sophus library, see https://github.com/strasdat/Sophus.
-    
+## DVO SLAM
+The DVO SLAM code is clone from jade-devel branch from DVO SLAM repository. 
+This version uses catkin to build the code, which makes things much easier. 
 
-## Installation
+The Catkin workspace is organized as follows: 
 
-Checkout the branch for your ROS version into a folder in your `ROS_PACKAGE_PATH` and build the packages with `rosmake`.
+dvo_slam  (Catkin workspace root)
+	src 
+	  dvo_core
+	    CMakeLists.txt
+	    src
+	  dvo_benchmark
+	    CMakeLists.txt
+	    src
 
- *  ROS Fuerte:
-    
-    ```bash
-    git clone -b fuerte git://github.com/tum-vision/dvo_slam.git
-    rosmake dvo_core dvo_ros dvo_slam dvo_benchmark
-    ```
+	README.md
 
-## Usage
+where dvo_slam is the root of the Catkin workspace and has 4 packages: dvo_core, dvo_ros, dvo_slam, and dvo_benchmark.
 
-Estimating the camera trajectory from an RGB-D image stream:
+## Dependencies 
 
-*TODO*
+### sophus
+ 
+git clone https://github.com/strasdat/Sophus.git
+cd Sophus
+mkdir build
+cd build
+cmake ..
+make
+sudo make install 
 
-For visualization:
+### CSparse
+sudo apt-get install libsuitesparse-dev
 
- *  Start RVIZ
- *  Set the *Target Frame* to `/world`
- *  Add an *Interactive Marker* display and set its *Update Topic* to `/dvo_vis/update`
- *  Add a *PointCloud2* display and set its *Topic* to `/dvo_vis/cloud`
+### g2o (use commit ff647bd)
+It is necessary to build g2o *after* installing suitesparse to let g2o detect suitesparse.
 
-The red camera shows the current camera position. The blue camera displays the initial camera position.
+git clone https://github.com/RainerKuemmerle/g2o.git
+mkdir build
+cd build
+cmake .. -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_LGPL_SHARED_LIBS:BOOL=OFF
+make
+sudo make install
 
-## Publications
+We have to build g2o into static libraries 
+and build DVO SLAM also as static libraries to avoid some weird undefined reference to g2o::csparse_extension. It could be possible to build as shared libraries (by default) but somehow it does not work on my machine.
 
-The following publications describe the approach:
+## Build DVO SLAM
+Go back to Catkin workspace's root folder and execute
 
- *   **Dense Visual SLAM for RGB-D Cameras** (C. Kerl, J. Sturm, D. Cremers), In Proc. of the Int. Conf. on Intelligent Robot Systems (IROS), 2013.
- *   **Robust Odometry Estimation for RGB-D Cameras** (C. Kerl, J. Sturm, D. Cremers), In Proc. of the IEEE Int. Conf. on Robotics and Automation (ICRA), 2013
- *   **Real-Time Visual Odometry from Dense RGB-D Images** (F. Steinbruecker, J. Sturm, D. Cremers), In Workshop on Live Dense Reconstruction with Moving Cameras at the Intl. Conf. on Computer Vision (ICCV), 2011.
+catkin_make
 
-## License
+to build all packages. You can also build each package separately by 
 
-The packages *dvo_core*, *dvo_ros*, *dvo_slam*, and *dvo_benchmark* are licensed under the GNU General Public License Version 3 (GPLv3), see http://www.gnu.org/licenses/gpl.html.
+catkin_make --pkg dvo_core
+catkin_make --pkg dvo_ros
+catkin_make --pkg dvo_slam 
+catkin make --pkg dvo_benchmark
 
-The package *sophus* is licensed under the MIT License, see http://opensource.org/licenses/MIT.

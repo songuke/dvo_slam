@@ -2,14 +2,24 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(dvo_ros)
 
+set(BUILD_SHARED_LIBS OFF)
+
 find_package(catkin REQUIRED COMPONENTS roscpp tf tf_conversions eigen_conversions dynamic_reconfigure dvo_core sensor_msgs image_transport message_filters cv_bridge visualization_msgs interactive_markers pcl_ros)
 find_package(cmake_modules REQUIRED)
-find_package(PCL REQUIRED COMPONENTS common)
-find_package(Eigen3 REQUIRED)
-#find_package(sophus REQUIRED)
-#find_package(Boost REQUIRED thread)
-find_package(OpenCV 2.4.8 REQUIRED)
-#find_package(TBB REQUIRED)
+
+# C++11 support
+IF(NOT MSVC)
+  include(CheckCXXCompilerFlag)
+  CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+  CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+  if(COMPILER_SUPPORTS_CXX11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  elseif(COMPILER_SUPPORTS_CXX0X)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+  else()
+    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+  endif()
+endif()
 
 # dynamic reconfigure
 generate_dynamic_reconfigure_options(cfg/CameraDenseTracker.cfg)
@@ -17,16 +27,11 @@ generate_dynamic_reconfigure_options(cfg/CameraDenseTracker.cfg)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES dvo_ros
-  DEPENDS OpenCV PCL
 )
 
 include_directories(
   "include"
-  ${dvo_ros_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIRS}
-  ${Boost_INCLUDE_DIRS}
-  ${PCL_INCLUDE_DIRS}
 )
 
 
