@@ -1,4 +1,8 @@
-# How to build DVO SLAM for Linux Mint Rosa 17.3 (based on Ubunty Trusty 14.04 LTS)
+# How to build DVO SLAM for Linux Mint Rosa 17.3 (based on Ubuntu Trusty 14.04 LTS)
+
+The build has been tested on Linux Mint Rosa 17.3 (Ubuntu Trusty 14.04) + ROS Indigo. 
+It also worked on Ubuntu Xenial 16.04 + ROS Kinetic. 
+The following steps assume ROS Indigo. 
 
 ## Install ROS Indigo
 
@@ -67,10 +71,19 @@ cd g2o
 git checkout 67d5fa7
 mkdir build
 cd build
-cmake .. -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_LGPL_SHARED_LIBS:BOOL=OFF
+cmake .. -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_LGPL_SHARED_LIBS:BOOL=OFF -DG2O_BUILD_APPS:BOOL=OFF -DG2O_BUILD_EXAMPLES:BOOL=OFF
 make
 sudo make install
 ```
+
+If your system has Eigen >= 3.3, don't use it. The old version of g2o is only compatible to Eigen 3.2.8. 
+Download Eigen 3.2.8, put it into the EXTERNAL folder in g2o, and use this CMake command instead:
+
+```
+cmake .. -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_LGPL_SHARED_LIBS:BOOL=OFF -DG2O_BUILD_APPS:BOOL=OFF -DG2O_BUILD_EXAMPLES:BOOL=OFF -DG2O_EIGEN3_INCLUDE=/home/sutd/Workspace/g2o/EXTERNAL/eigen3.2.8/
+
+```
+This will force g2o to use our Eigen library instead of the system Eigen.
 
 We have to build g2o into static libraries 
 and build DVO SLAM also as static libraries to avoid some weird undefined reference to g2o::csparse_extension. It could be possible to build as shared libraries (by default) but somehow it does not work on my machine.
