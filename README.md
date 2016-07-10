@@ -76,7 +76,7 @@ make
 sudo make install
 ```
 
-If your system has Eigen >= 3.3, don't use it. The old version of g2o is only compatible to Eigen 3.2.8. 
+If your system has Eigen >= 3.3, don't use it with g2o. The old version of g2o is only compatible to Eigen 3.2.8. 
 Download Eigen 3.2.8, put it into the EXTERNAL folder in g2o, and use this CMake command instead:
 
 ```
@@ -112,12 +112,16 @@ source devel/setup.sh
 
 This will make ROS able to find our newly built packages. 
 
-Now we can navigate to src/dvo_benchmark/launch and execute
+Now we can navigate to example folder and execute
 
 ```
-roslaunch dvo_benchmark benchmark.launch dataset:=<RGBD dataset folder>
+roslaunch launch/benchmark.launch dataset:=<RGBD dataset folder>
 ```
 
+Dataset follows structures in RGBD SLAM by TUM. The only difference is 
+the depth scale is reset 1000 (in benchmark_slam.cpp) instead of 5000.
+I found this to be more convenient as images from Kinect or Asus Xtion all follows this convention. 
+ 
 
 ## Rviz
 
