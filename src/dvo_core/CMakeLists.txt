@@ -9,7 +9,7 @@ find_package(cmake_modules REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Sophus REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
-find_package(OpenCV 2.4.8 REQUIRED)
+find_package(OpenCV REQUIRED)
 find_package(TBB REQUIRED)
 find_package(PCL REQUIRED COMPONENTS common filters)
 
@@ -28,6 +28,7 @@ include_directories(
   ${EIGEN3_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 add_library(dvo_core 
@@ -52,6 +53,7 @@ add_library(dvo_core
 
 target_link_libraries(dvo_core 
     ${PCL_LIBRARIES}
+    ${OpenCV_LIBRARIES}
     tbb
     boost_thread 
 )

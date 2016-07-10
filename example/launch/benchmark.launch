@@ -29,7 +29,7 @@
     <param type="string" name="trajectory_file" value="$(arg trajectory_file)" />
     
     <param type="bool" name="show_estimate" value="true" />
-    <param type="bool" name="show_groundtruth" value="true" />
+    <param type="bool" name="show_groundtruth" value="false" />
     <!--<param type="bool" name="keep_alive" value="$(arg keep_alive)" />-->
     <param type="bool" name="keep_alive" value="true" />
 

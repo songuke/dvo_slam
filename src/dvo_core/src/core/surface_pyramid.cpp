@@ -21,6 +21,7 @@
 #include <dvo/core/surface_pyramid.h>
 
 #include <iostream>
+#include <limits>
 
 namespace dvo
 {

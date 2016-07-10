@@ -215,6 +215,7 @@ public:
       c.val[1] = 1.0f;
       c.val[2] = 1.0f;
     }
+    
 
     cv::cvtColor(hsv, rgb, CV_HSV2RGB);
   }
