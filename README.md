@@ -92,16 +92,16 @@ and build DVO SLAM also as static libraries to avoid some weird undefined refere
 Go back to Catkin workspace's root folder and execute
 
 ```
-catkin_make
+catkin_make -DCMAKE_BUILD_TYPE=Release
 ```
 
 to build all packages. You can also build each package separately by 
 
 ```
-catkin_make --pkg dvo_core
-catkin_make --pkg dvo_ros
-catkin_make --pkg dvo_slam 
-catkin make --pkg dvo_benchmark
+catkin_make --pkg dvo_core -DCMAKE_BUILD_TYPE=Release
+catkin_make --pkg dvo_ros -DCMAKE_BUILD_TYPE=Release
+catkin_make --pkg dvo_slam -DCMAKE_BUILD_TYPE=Release
+catkin make --pkg dvo_benchmark -DCMAKE_BUILD_TYPE=Release
 ```
 
 ## How to run
@@ -131,4 +131,6 @@ Target frame is "world".
 
 The cloud is only updated once in a while in the viewer.   
 Try to display the interactive markers instead. If it works, you will see the camera icon moving. 
+
+If you see nothing in rviz but DVO is running, it could be because the project is built in Debug mode, which is slow. Make sure -DCMAKE_BUILD_TYPE=Release is used with catkin_make. 
 
