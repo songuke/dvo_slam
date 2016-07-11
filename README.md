@@ -118,19 +118,21 @@ Now we can navigate to example folder and execute
 roslaunch launch/benchmark.launch dataset:=<RGBD dataset folder>
 ```
 
+You can check the output trajectory in example/output/trajectory.txt. 
+
 Dataset follows structures in RGBD SLAM by TUM. The only difference is 
 the depth scale is reset 1000 (in benchmark_slam.cpp) instead of 5000.
 I found this to be more convenient as images from Kinect or Asus Xtion all follows this convention. 
  
+The focal length is hard coded in benchmark_slam.cpp. Change it to your focal length. 
 
 ## Rviz
 
 After DVO SLAM is running, you can launch rviz to observe some results. 
 
-Target frame is "world".
-
-The cloud is only updated once in a while in the viewer.   
-Try to display the interactive markers instead. If it works, you will see the camera icon moving. 
+In global options in the left panel, set target frame is "world".
+Then click Add button, switch to By Topic tab, and choose PointCloud2. You can also add Interactive Markers. 
 
 If you see nothing in rviz but DVO is running, it could be because the project is built in Debug mode, which is slow. Make sure -DCMAKE_BUILD_TYPE=Release is used with catkin_make. 
+
 
