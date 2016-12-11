@@ -45,12 +45,15 @@ where dvo_slam is the root of the Catkin workspace and has 4 packages: dvo_core,
 ```
 git clone https://github.com/strasdat/Sophus.git
 cd Sophus
+git checkout b474f05
 mkdir build
 cd build
 cmake ..
 make
 sudo make install 
 ```
+
+Note: As of Dec 2016, the master branch of Sophus seems no longer compatible for building DVO SLAM. Here we use an older version of Sophus, commit b474f05, to build.
 
 ### CSparse
 
